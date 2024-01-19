@@ -8,6 +8,9 @@
 
 from PySide6.QtWidgets import QWidget, QBoxLayout
 
+from editor.vg_scene import VisualGraphScene
+from editor.vg_view import VisualGraphView
+
 
 class VisualGraphEditor(QWidget):
     def __init__(self, parent=None):
@@ -24,5 +27,12 @@ class VisualGraphEditor(QWidget):
         # 设置布局
         self.layout = QBoxLayout(QBoxLayout.LeftToRight, self)
         self.layout.setContentsMargins(0, 0, 0, 0)
+
+        # 设置场景
+        self._scene = VisualGraphScene(self)
+        self._view = VisualGraphView(self._scene, self)
+
+        self.layout.addWidget(self._view)
+
 
 
