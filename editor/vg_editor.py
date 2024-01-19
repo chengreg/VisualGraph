@@ -16,7 +16,10 @@ class VisualGraphEditor(QWidget):
     def __init__(self, parent=None):
         super(VisualGraphEditor, self).__init__(parent)
 
+        self._view = None
+        self._scene = None
         self.layout = None
+
         self.setup_editor()
 
     def setup_editor(self):
