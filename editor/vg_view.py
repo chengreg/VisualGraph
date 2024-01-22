@@ -9,6 +9,7 @@
 from PySide6.QtWidgets import QGraphicsView
 from PySide6.QtGui import QPainter, QMouseEvent
 from PySide6.QtCore import Qt, QEvent
+from editor.vg_node import GraphNode
 
 
 class VisualGraphView(QGraphicsView):
@@ -61,45 +62,6 @@ class VisualGraphView(QGraphicsView):
 
             # print(self._view_scale)
 
-    # def mousePressEvent(self, event):
-    #     """
-    #     鼠标按下事件
-    #     :param event: 事件
-    #     """
-    #     if event.button() == Qt.MouseButton.MiddleButton:
-    #         if self.itemAt(event.pos()) is not None:
-    #             return
-    #         else:
-    #             # 重写鼠标事件，使其能够拖动画布
-    #             release_event = QMouseEvent(QEvent.MouseButtonRelease, event.localPos(), Qt.LeftButton, Qt.NoButton,
-    #                                         event.modifiers())
-    #             super(VisualGraphView, self).mouseReleaseEvent(release_event)
-    #
-    #             self.setDragMode(QGraphicsView.DragMode.ScrollHandDrag)
-    #             self._drag_mode = True
-    #
-    #             # 重写鼠标事件，使其能够拖动画布
-    #             press_event = QMouseEvent(QEvent.MouseButtonPress, event.localPos(), Qt.LeftButton, Qt.NoButton,
-    #                                       event.modifiers())
-    #             super(VisualGraphView, self).mousePressEvent(press_event)
-    #
-    #     super(VisualGraphView, self).mousePressEvent(event)
-    #
-    # def mouseReleaseEvent(self, event):
-    #     """
-    #     鼠标释放事件
-    #     :param event: 事件
-    #     """
-    #     if event.button() == Qt.MouseButton.MiddleButton:
-    #         release_event = QMouseEvent(QEvent.MouseButtonRelease, event.localPos(), Qt.LeftButton, Qt.NoButton,
-    #                                     event.modifiers())
-    #         super(VisualGraphView, self).mouseReleaseEvent(release_event)
-    #
-    #         self.setDragMode(QGraphicsView.DragMode.NoDrag)
-    #         self._drag_mode = False
-    #
-    #     super(VisualGraphView, self).mouseReleaseEvent(event)
-
     @staticmethod
     def createMouseEvent(event_type, original_event):
         """
@@ -150,13 +112,8 @@ class VisualGraphView(QGraphicsView):
             self._view_scale = 1.0
         super().mouseDoubleClickEvent(event)
 
-    def add_graph_node(self, node, pos=[0, 0]):
-        """
-        添加节点
-        :param node: 节点
-        :param pos: 位置
-        """
-        if pos is None:
-            pos = [0, 0]
+    def add_graph_node(self, node: GraphNode, pos=[0, 0]):
         self._scene.addItem(node)
+
         node.setPos(pos[0], pos[1])
+        node.add_scene(self._scene)

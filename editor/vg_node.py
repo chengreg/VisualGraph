@@ -8,6 +8,7 @@
 from PySide6.QtGui import QPen, QColor, QBrush, QPainterPath, QFont
 from PySide6.QtWidgets import QGraphicsItem, QGraphicsTextItem
 from PySide6.QtCore import QRectF, Qt
+from editor.vg_node_port import NodePort
 
 
 class GraphNode(QGraphicsItem):
@@ -40,6 +41,12 @@ class GraphNode(QGraphicsItem):
         self._brush_title_back = QBrush(QColor("#aa00003f"))
 
         self.init_title()
+
+        # port
+        self._port_padding = 10
+
+    def add_scene(self, scene):
+        self._scene = scene
 
     def init_title(self):
         self._title_item = QGraphicsTextItem(self)
@@ -77,3 +84,35 @@ class GraphNode(QGraphicsItem):
         painter.setPen(self._pen_selected if self.isSelected() else self._pen_default)
         painter.setBrush(Qt.NoBrush)  # 不填充
         painter.drawPath(node_outline)
+
+    def add_port(self, port):
+        if port._port_type == NodePort.PORT_TYPE_EXEC_IN:
+            self.add_exec_in_port(port)
+        elif port._port_type == NodePort.PORT_TYPE_EXEC_OUT:
+            self.add_exec_out_port(port)
+        elif port._port_type == NodePort.PORT_TYPE_PARAM:
+            self.add_param_port(port)
+        elif port._port_type == NodePort.PORT_TYPE_OUTPUT:
+            self.add_output_port(port)
+
+    def add_exec_in_port(self, port: NodePort):
+        port.add_to_parent_node(self, self._scene)
+        port.setPos(self._port_padding, self._title_height)
+
+    def add_exec_out_port(self, port: NodePort):
+        port.add_to_parent_node(self, self._scene)
+
+        x = self._node_width - port._port_width
+        y = self._title_height
+        port.setPos(x, y)
+
+    def add_param_port(self, port: NodePort):
+        port.add_to_parent_node(self, self._scene)
+        port.setPos(self._port_padding, self._title_height + self._port_padding + port._port_icon_size)
+
+    def add_output_port(self, port: NodePort):
+        port.add_to_parent_node(self, self._scene)
+
+        x = self._node_width - port._port_width - self._port_padding
+        y = self._title_height + self._port_padding + port._port_icon_size
+        port.setPos(x, y)

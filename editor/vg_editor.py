@@ -8,6 +8,7 @@
 
 from PySide6.QtWidgets import QWidget, QBoxLayout
 
+from editor.vg_node_port import EXECInPort, EXECOutPort, ParamPort, OutputPort
 from editor.vg_scene import VisualGraphScene
 from editor.vg_view import VisualGraphView
 from editor.vg_node import GraphNode
@@ -41,5 +42,16 @@ class VisualGraphEditor(QWidget):
         self.layout.addWidget(self._view)
 
     def debug_add_node(self):
+        port1 = EXECInPort()
+        port2 = EXECOutPort()
+        port_param = ParamPort("width", "int", "#99ff22")
+        port_output = OutputPort("aera", "float", "#99ff22")
+
         node = GraphNode("test")
+
+        node.add_port(port1)
+        node.add_port(port2)
+        node.add_port(port_param)
+        node.add_port(port_output)
+
         self._view.add_graph_node(node, [0, 0])
