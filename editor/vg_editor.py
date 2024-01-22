@@ -42,16 +42,17 @@ class VisualGraphEditor(QWidget):
         self.layout.addWidget(self._view)
 
     def debug_add_node(self):
-        port1 = EXECInPort()
-        port2 = EXECOutPort()
-        port_param = ParamPort("width", "int", "#99ff22")
-        port_output = OutputPort("aera", "float", "#99ff22")
+        params = []
+        params.append(ParamPort("width", "int", "#99ff22"))
+        params.append(ParamPort("height", "int", "#99ff22"))
 
-        node = GraphNode("test")
+        outputs = []
+        outputs.append(OutputPort("area", "int", "#99ff22"))
+        outputs.append(OutputPort("area", "int", "#99ff22"))
+        outputs.append(OutputPort("area", "int", "#99ff22"))
+        outputs.append(OutputPort("area", "int", "#99ff22"))
+        outputs.append(OutputPort("area", "int", "#99ff22"))
 
-        node.add_port(port1)
-        node.add_port(port2)
-        node.add_port(port_param)
-        node.add_port(port_output)
 
-        self._view.add_graph_node(node, [0, 0])
+        node = GraphNode(title="testdddddddddddddddddddddddddddd23333333333", param_ports=params, output_ports=outputs, is_pure=True)
+        self._view.add_graph_node(node, [-100, -100])

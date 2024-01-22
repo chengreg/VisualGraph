@@ -8,20 +8,23 @@
 from PySide6.QtGui import QPen, QColor, QBrush, QPainterPath, QFont
 from PySide6.QtWidgets import QGraphicsItem, QGraphicsTextItem
 from PySide6.QtCore import QRectF, Qt
-from editor.vg_node_port import NodePort
+from editor.vg_node_port import NodePort, EXECInPort, EXECOutPort
 
 
 class GraphNode(QGraphicsItem):
-    def __init__(self, title='', scene=None, parent=None):
+    def __init__(self, title='', param_ports=None, output_ports=None, is_pure=False, scene=None, parent=None):
         super().__init__(parent)
 
         self._title = title
         self._scene = scene
 
         # # 初始化节点的大小
-        self._node_width = 240
-        self._node_height = 160
+        self._node_width_min = 20
+        self._node_height_min = 60
+        self._node_width = 100
+        self._node_height = 100
         self.node_radius = 10
+        self._node_space = 50
 
         # 初始化节点的边框样式
         self._pen_default = QPen(QColor("#151515"))  # 默认边框颜色
@@ -35,18 +38,82 @@ class GraphNode(QGraphicsItem):
 
         # 设置节点title
         self._title_height = 35
-        self._title_font = QFont('Arial', 13)
+        self._title_font_size = 13
+        self._title_font = QFont('Arial', self._title_font_size)
         self._title_color = Qt.white
         self._title_padding = 3
         self._brush_title_back = QBrush(QColor("#aa00003f"))
 
         self.init_title()
 
-        # port
+        #  exec port
         self._port_padding = 10
+        self._port_index = 0
+        if is_pure:
+            self._node_height_min -= 20
+        else:
+
+            self._port_index += 1
+
+
+
+        # param port
+        self._param_ports = param_ports
+
+
+        # output port
+        self._output_ports = output_ports
+
+        self.init_node_width_height()
+
+        self.init_param_ports()
+        self.init_output_ports()
+
+        if not is_pure:
+            self.init_exec_ports()
+
 
     def add_scene(self, scene):
         self._scene = scene
+
+    def init_exec_ports(self):
+        exec_in = EXECInPort()
+        exec_out = EXECOutPort()
+        self.add_port(exec_in)
+        self.add_port(exec_out)
+
+    def init_param_ports(self):
+        for i, port in enumerate(self._param_ports):
+            self.add_port(port, index=i+self._port_index)
+
+    def init_output_ports(self):
+        for i, port in enumerate(self._output_ports):
+            self.add_port(port, index=i + self._port_index)
+
+    def init_node_width_height(self):
+        param_height = len(self._param_ports) * (
+                    self._param_ports[0]._port_icon_size + self._port_padding) + self._node_height_min
+        if self._node_height < param_height:
+            self._node_height = param_height
+
+        self._max_param_port_width = 0
+        for _, port in enumerate(self._param_ports):
+            if self._max_param_port_width < port._port_width:
+                self._max_param_port_width = port._port_width
+
+        output_height = len(self._output_ports) * (
+                self._output_ports[0]._port_icon_size + self._port_padding) + self._node_height_min
+        if self._node_height < output_height:
+            self._node_height = output_height
+
+        self._max_output_port_width = 0
+        for _, port in enumerate(self._output_ports):
+            if self._max_output_port_width < port._port_width:
+                self._max_output_port_width = port._port_width
+
+        if self._max_param_port_width + self._max_output_port_width + self._node_space > self._node_width:
+            self._node_width = self._max_param_port_width + self._max_output_port_width + self._node_space
+
 
     def init_title(self):
         self._title_item = QGraphicsTextItem(self)
@@ -54,6 +121,10 @@ class GraphNode(QGraphicsItem):
         self._title_item.setFont(self._title_font)
         self._title_item.setDefaultTextColor(self._title_color)
         self._title_item.setPos(self._title_padding, self._title_padding)
+
+        title_width = self._title_font_size*len(self._title) + self._node_width_min
+        if self._node_width < title_width:
+            self._node_width = title_width
 
     def boundingRect(self) -> QRectF:
         # 定义图形项的边界矩形，用于绘制和碰撞检测
@@ -85,34 +156,34 @@ class GraphNode(QGraphicsItem):
         painter.setBrush(Qt.NoBrush)  # 不填充
         painter.drawPath(node_outline)
 
-    def add_port(self, port):
+    def add_port(self, port: NodePort, index=0):
         if port._port_type == NodePort.PORT_TYPE_EXEC_IN:
-            self.add_exec_in_port(port)
+            self.add_exec_in_port(port, index=index)
         elif port._port_type == NodePort.PORT_TYPE_EXEC_OUT:
-            self.add_exec_out_port(port)
+            self.add_exec_out_port(port, index=index)
         elif port._port_type == NodePort.PORT_TYPE_PARAM:
-            self.add_param_port(port)
+            self.add_param_port(port, index=index)
         elif port._port_type == NodePort.PORT_TYPE_OUTPUT:
-            self.add_output_port(port)
+            self.add_output_port(port, index=index)
 
-    def add_exec_in_port(self, port: NodePort):
+    def add_exec_in_port(self, port: NodePort, index=0):
         port.add_to_parent_node(self, self._scene)
         port.setPos(self._port_padding, self._title_height)
 
-    def add_exec_out_port(self, port: NodePort):
+    def add_exec_out_port(self, port: NodePort, index=0):
         port.add_to_parent_node(self, self._scene)
 
         x = self._node_width - port._port_width
         y = self._title_height
         port.setPos(x, y)
 
-    def add_param_port(self, port: NodePort):
+    def add_param_port(self, port: NodePort, index=0):
         port.add_to_parent_node(self, self._scene)
-        port.setPos(self._port_padding, self._title_height + self._port_padding + port._port_icon_size)
+        port.setPos(self._port_padding, self._title_height + index*(self._port_padding + port._port_icon_size))
 
-    def add_output_port(self, port: NodePort):
+    def add_output_port(self, port: NodePort, index=0):
         port.add_to_parent_node(self, self._scene)
 
         x = self._node_width - port._port_width - self._port_padding
-        y = self._title_height + self._port_padding + port._port_icon_size
+        y = self._title_height + index*(self._port_padding + port._port_icon_size)
         port.setPos(x, y)
