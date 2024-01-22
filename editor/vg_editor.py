@@ -48,11 +48,6 @@ class VisualGraphEditor(QWidget):
 
         outputs = []
         outputs.append(OutputPort("area", "int", "#99ff22"))
-        outputs.append(OutputPort("area", "int", "#99ff22"))
-        outputs.append(OutputPort("area", "int", "#99ff22"))
-        outputs.append(OutputPort("area", "int", "#99ff22"))
-        outputs.append(OutputPort("area", "int", "#99ff22"))
 
-
-        node = GraphNode(title="testdddddddddddddddddddddddddddd23333333333", param_ports=params, output_ports=outputs, is_pure=True)
+        node = GraphNode(title="test", param_ports=params, output_ports=outputs, is_pure=False)
         self._view.add_graph_node(node, [-100, -100])

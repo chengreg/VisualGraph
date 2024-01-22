@@ -23,7 +23,7 @@ class NodePort(QGraphicsItem):
         self._port_label = port_label
         self._port_class = port_class
         self._port_color = QColor(port_color)
-        self._port_type = port_type
+        self.port_type = port_type
 
         self._pen_default = QPen(QColor(self._port_color))  # 默认边框颜色
         self._pen_default.setWidth(1.5)  # 默认边框宽度
@@ -31,12 +31,12 @@ class NodePort(QGraphicsItem):
         self._font_size = 12
         self._port_font = QFont('Arial', self._font_size)
 
-        self._port_icon_size = 20
+        self.port_icon_size = 20
         self._port_label_size = len(self._port_label) * self._font_size
-        self._port_width = self._port_icon_size + self._port_label_size
+        self.port_width = self.port_icon_size + self._port_label_size
 
     def boundingRect(self):
-        return QRectF(0, 0, self._port_width, self._port_icon_size)
+        return QRectF(0, 0, self.port_width, self.port_icon_size)
 
     def add_to_parent_node(self, parent_node, scene):
         self.setParentItem(parent_node)
@@ -52,11 +52,11 @@ class EXECPort(NodePort):
     def paint(self, painter: QPainter, option, widget=None) -> None:
         port_outline = QPainterPath()
         poly = QPolygonF()
-        poly.append(QPointF(0, 0.2 * self._port_icon_size))
-        poly.append(QPointF(0.25 * self._port_icon_size, 0.2 * self._port_icon_size))
-        poly.append(QPointF(self._port_icon_size * 0.5, self._port_icon_size * 0.5))
-        poly.append(QPointF(0.25 * self._port_icon_size, 0.8 * self._port_icon_size))
-        poly.append(QPointF(0, 0.8 * self._port_icon_size))
+        poly.append(QPointF(0, 0.2 * self.port_icon_size))
+        poly.append(QPointF(0.25 * self.port_icon_size, 0.2 * self.port_icon_size))
+        poly.append(QPointF(self.port_icon_size * 0.5, self.port_icon_size * 0.5))
+        poly.append(QPointF(0.25 * self.port_icon_size, 0.8 * self.port_icon_size))
+        poly.append(QPointF(0, 0.8 * self.port_icon_size))
 
         port_outline.addPolygon(poly)
 
@@ -86,14 +86,14 @@ class ParamPort(NodePort):
         # 画圆
         painter.setPen(self._pen_default)
         painter.setBrush(Qt.NoBrush)
-        painter.drawEllipse(QPointF(self._port_icon_size * 0.25, self._port_icon_size * 0.5),
-                            self._port_icon_size * 0.25, self._port_icon_size * 0.25)
+        painter.drawEllipse(QPointF(self.port_icon_size * 0.25, self.port_icon_size * 0.5),
+                            self.port_icon_size * 0.25, self.port_icon_size * 0.25)
 
         # 画小三角
         poly = QPolygonF()
-        poly.append(QPointF(self._port_icon_size * 0.6, self._port_icon_size * 0.35))
-        poly.append(QPointF(self._port_icon_size * 0.75, self._port_icon_size * 0.5))
-        poly.append(QPointF(self._port_icon_size * 0.6, self._port_icon_size * 0.65))
+        poly.append(QPointF(self.port_icon_size * 0.6, self.port_icon_size * 0.35))
+        poly.append(QPointF(self.port_icon_size * 0.75, self.port_icon_size * 0.5))
+        poly.append(QPointF(self.port_icon_size * 0.6, self.port_icon_size * 0.65))
         painter.setBrush(self._brush_default)
         painter.setPen(Qt.NoPen)
         painter.drawPolygon(poly)
@@ -101,7 +101,7 @@ class ParamPort(NodePort):
         # 画文字
         painter.setPen(self._pen_default)
         painter.drawText(
-            QRectF(self._port_icon_size, 0.1 * self._port_icon_size, self._port_label_size, self._port_icon_size),
+            QRectF(self.port_icon_size, 0.1 * self.port_icon_size, self._port_label_size, self.port_icon_size),
             Qt.AlignmentFlag.AlignLeft, self._port_label)
 
 
@@ -114,22 +114,20 @@ class OutputPort(NodePort):
         # 画文字
         painter.setPen(self._pen_default)
         painter.drawText(
-            QRectF(0, 0.1 * self._port_icon_size, self._port_label_size, self._port_icon_size),
+            QRectF(0, 0.1 * self.port_icon_size, self._port_label_size, self.port_icon_size),
             Qt.AlignmentFlag.AlignRight, self._port_label)
-
 
         # 画圆
         painter.setPen(self._pen_default)
         painter.setBrush(Qt.NoBrush)
-        painter.drawEllipse(QPointF(self._port_label_size + self._port_icon_size * 0.5, self._port_icon_size * 0.5),
-                            self._port_icon_size * 0.25, self._port_icon_size * 0.25)
+        painter.drawEllipse(QPointF(self._port_label_size + self.port_icon_size * 0.5, self.port_icon_size * 0.5),
+                            self.port_icon_size * 0.25, self.port_icon_size * 0.25)
 
         # 画小三角
         poly = QPolygonF()
-        poly.append(QPointF(self._port_label_size + self._port_icon_size * 0.85, self._port_icon_size * 0.35))
-        poly.append(QPointF(self._port_label_size + self._port_icon_size * 1, self._port_icon_size * 0.5))
-        poly.append(QPointF(self._port_label_size + self._port_icon_size * 0.85, self._port_icon_size * 0.65))
+        poly.append(QPointF(self._port_label_size + self.port_icon_size * 0.85, self.port_icon_size * 0.35))
+        poly.append(QPointF(self._port_label_size + self.port_icon_size * 1, self.port_icon_size * 0.5))
+        poly.append(QPointF(self._port_label_size + self.port_icon_size * 0.85, self.port_icon_size * 0.65))
         painter.setBrush(self._brush_default)
         painter.setPen(Qt.NoPen)
         painter.drawPolygon(poly)
-
