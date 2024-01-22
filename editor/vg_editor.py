@@ -10,6 +10,7 @@ from PySide6.QtWidgets import QWidget, QBoxLayout
 
 from editor.vg_scene import VisualGraphScene
 from editor.vg_view import VisualGraphView
+from editor.vg_node import GraphNode
 
 
 class VisualGraphEditor(QWidget):
@@ -21,6 +22,8 @@ class VisualGraphEditor(QWidget):
         self.layout = None
 
         self.setup_editor()
+
+        self.debug_add_node()
 
     def setup_editor(self):
         # 设置窗口大小
@@ -37,5 +40,6 @@ class VisualGraphEditor(QWidget):
 
         self.layout.addWidget(self._view)
 
-
-
+    def debug_add_node(self):
+        node = GraphNode()
+        self._view.add_graph_node(node, [0, 0])

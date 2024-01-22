@@ -150,3 +150,13 @@ class VisualGraphView(QGraphicsView):
             self._view_scale = 1.0
         super().mouseDoubleClickEvent(event)
 
+    def add_graph_node(self, node, pos=[0, 0]):
+        """
+        添加节点
+        :param node: 节点
+        :param pos: 位置
+        """
+        if pos is None:
+            pos = [0, 0]
+        self._scene.addItem(node)
+        node.setPos(pos[0], pos[1])
