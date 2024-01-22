@@ -41,5 +41,5 @@ class VisualGraphEditor(QWidget):
         self.layout.addWidget(self._view)
 
     def debug_add_node(self):
-        node = GraphNode()
+        node = GraphNode("test")
         self._view.add_graph_node(node, [0, 0])
